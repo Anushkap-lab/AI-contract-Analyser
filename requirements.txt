@@ -1,0 +1,11 @@
+python-dotenv
+langchain-groq
+langchain-core
+langchain
+fastapi
+uvicorn
+langchain-community
+pymongo
+langchain-huggingface
+sentence-transformers
+faiss-cpu
