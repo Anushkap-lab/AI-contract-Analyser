@@ -6,17 +6,22 @@ const RISK_CONFIG = {
 
 export default function ClauseList({ clauses = [] }) {
   return (
-    <div className="flex flex-col gap-2">
+    <div className="clause-list">
       {clauses.map((clause, i) => {
-        const cfg = RISK_CONFIG[clause.risk] || RISK_CONFIG.low;
+        const isText = typeof clause === "string";
+        const name = isText ? `Finding ${i + 1}` : clause?.name || `Finding ${i + 1}`;
+        const description = isText ? clause : clause?.description || clause?.text || "No details provided.";
+        const risk = isText ? "low" : clause?.risk;
+        const cfg = RISK_CONFIG[risk] || RISK_CONFIG.low;
+
         return (
-          <div key={i} className="flex items-start gap-3 border border-gray-100 dark:border-gray-700 rounded-xl p-3 bg-white dark:bg-gray-900">
-            <span className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${cfg.dot}`} />
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium">{clause.name}</p>
-              <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">{clause.description}</p>
+          <div key={i} className="clause-item">
+            <span className={`clause-dot ${cfg.dot}`} />
+            <div className="clause-body">
+              <p className="clause-name">{name}</p>
+              <p className="clause-desc">{description}</p>
             </div>
-            <span className={`text-xs px-2 py-0.5 rounded-md shrink-0 ${cfg.badge}`}>
+            <span className={`clause-badge ${cfg.badge}`}>
               {cfg.label}
             </span>
           </div>

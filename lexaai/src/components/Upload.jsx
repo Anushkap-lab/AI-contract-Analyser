@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Upload } from "lucide-react";
+import { FileUp } from "lucide-react";
 
 export default function UploadZone({ onFileSelect, isLoading }) {
   const [dragging, setDragging] = useState(false);
@@ -22,31 +22,30 @@ export default function UploadZone({ onFileSelect, isLoading }) {
       onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
       onDragLeave={() => setDragging(false)}
       onDrop={handleDrop}
-      className={`
-        min-h-72 border-2 border-dashed rounded-2xl p-10 text-center cursor-pointer transition-all
-        flex flex-col items-center justify-center
-        ${dragging ? "border-gold bg-gold/5" : "border-gray-200 dark:border-gray-700 hover:border-gray-400"}
-        ${isLoading ? "opacity-60 pointer-events-none" : ""}
-      `}
+      className={`upload-zone ${dragging ? "dragging" : ""} ${isLoading ? "loading" : ""}`}
     >
       <input
         ref={inputRef}
         type="file"
         accept=".pdf,.docx,.txt"
-        className="hidden"
+        className="file-input"
         onChange={handleChange}
       />
-      <div className="w-12 h-12 bg-navy rounded-xl flex items-center justify-center mb-4">
+      <div className="upload-icon-wrap">
         {isLoading
-          ? <div className="w-5 h-5 border-2 border-gold border-t-transparent rounded-full animate-spin" />
-          : <Upload className="text-gold" size={20} />
+          ? <div className="spin" />
+          : <FileUp size={25} strokeWidth={1.9} />
         }
       </div>
-      <p className="font-serif text-base font-medium mb-1">
+      <p className="upload-title">
         {isLoading ? "Analysing contract..." : "Drop your contract here"}
       </p>
-      <p className="text-sm text-gray-500">PDF</p>
-     
+      <p className="upload-sub">
+        Drag & drop or click to upload
+      </p>
+      <div className="type-tags">
+        <span className="type-tag">PDF</span>
+      </div>
     </div>
   );
 }

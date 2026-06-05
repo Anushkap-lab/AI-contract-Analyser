@@ -1,0 +1,211 @@
+/* login.css */
+
+.app-shell {
+  min-height: 100vh;
+  background-color: #0a0a0a;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.auth-shell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  position: relative;
+}
+
+.auth-shell::before {
+  content: "";
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.05) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* ── Panel ── */
+.auth-panel {
+  width: 100%;
+  max-width: 440px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Brand ── */
+.auth-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 2.5rem;
+}
+
+.brand-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #d4af37, #8b6914);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+  flex-shrink: 0;
+}
+
+.brand-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #f5f0e8;
+  letter-spacing: 0.03em;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.brand-sub {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #6b5a30;
+  margin: 0;
+}
+
+/* ── Form ── */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.auth-form > div:first-of-type {
+  margin-bottom: 0.5rem;
+}
+
+.auth-form h2 {
+  font-size: 1.9rem;
+  font-weight: 400;
+  color: #f5f0e8;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin: 0 0 0.35rem;
+}
+
+.auth-form > div:first-of-type p {
+  font-size: 0.9rem;
+  color: #5a5040;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* ── Labels & Inputs ── */
+.auth-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.68rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #9a8a6a;
+}
+
+.auth-form input {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border-radius: 12px;
+  border: 1px solid #2a2218;
+  background-color: #141210;
+  color: #f5f0e8;
+  font-size: 0.95rem;
+  font-weight: 400;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
+}
+
+.auth-form input::placeholder {
+  color: #3a3020;
+}
+
+.auth-form input:focus {
+  border-color: rgba(212, 175, 55, 0.5);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.08);
+}
+
+/* ── Error ── */
+.error-box {
+  font-size: 0.85rem;
+  color: #e07b5a;
+  background-color: rgba(224, 123, 90, 0.08);
+  border: 1px solid rgba(224, 123, 90, 0.2);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── Button ── */
+.auth-button {
+  width: 100%;
+  padding: 1rem;
+  margin-top: 0.25rem;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, #d4af37, #8b6914);
+  color: #0a0a0a;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  box-shadow: 0 4px 24px rgba(212, 175, 55, 0.25);
+  transition: opacity 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+.auth-button:hover:not(:disabled) {
+  opacity: 0.9;
+  box-shadow: 0 6px 32px rgba(212, 175, 55, 0.35);
+  transform: translateY(-1px);
+}
+
+.auth-button:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 12px rgba(212, 175, 55, 0.2);
+}
+
+.auth-button:disabled {
+  background: linear-gradient(135deg, #6b5520, #4a3a10);
+  box-shadow: none;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* ── Footer link ── */
+.auth-link {
+  text-align: center;
+  font-size: 0.875rem;
+  color: #4a4030;
+  margin: 0.25rem 0 0;
+}
+
+.auth-link a {
+  color: #d4af37;
+  text-decoration: none;
+  font-weight: 500;
+  transition: opacity 0.15s ease;
+}
+
+.auth-link a:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+  .auth-shell {
+    padding: 1.5rem 1rem;
+    align-items: flex-start;
+    padding-top: 3rem;
+  }
+}

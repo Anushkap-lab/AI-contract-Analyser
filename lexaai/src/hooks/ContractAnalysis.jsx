@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { analyseContract } from "../services/api";
+import { uploadContract } from "../services/api";
 
 export function useContractAnalysis() {
   const [loading, setLoading]   = useState(false);
@@ -10,7 +10,7 @@ export function useContractAnalysis() {
     setLoading(true);
     setError(null);
     try {
-      const data = await analyseContract(file);
+      const data = await uploadContract(file);
       setResult(data);
     } catch (err) {
       setError(err.response?.data?.message || "Analysis failed. Please try again.");
