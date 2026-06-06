@@ -374,11 +374,9 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # --- Schemas ---
 class RegisterRequest(BaseModel):
-    first_name: str
-    last_name: str
+    name: str
     email: EmailStr
     password: str
-    company_size: str | None = None
 
     @field_validator("password")
     @classmethod
@@ -391,7 +389,7 @@ class RegisterRequest(BaseModel):
             raise ValueError("Password must contain at least one number")
         return v
 
-    @field_validator("first_name", "last_name")
+    @field_validator("first_name", "last_name",check_fields=False)
     @classmethod
     def validate_name(cls, v):
         v = v.strip()
@@ -403,8 +401,7 @@ class RegisterRequest(BaseModel):
 class RegisterResponse(BaseModel):
     id: str
     email: str
-    first_name: str
-    last_name: str
+    name: str
     message: str
 
 
@@ -427,11 +424,9 @@ async def register(payload: RegisterRequest):
 
     # Build user document
     user_doc = {
-        "first_name": payload.first_name,
-        "last_name": payload.last_name,
+        "name": payload.name,
         "email": payload.email,
         "password": hashed_password,
-        "company_size": payload.company_size,
         "is_verified": False,
         "created_at": datetime.utcnow(),
     }
@@ -441,8 +436,7 @@ async def register(payload: RegisterRequest):
     return RegisterResponse(
         id=str(result.inserted_id),
         email=payload.email,
-        first_name=payload.first_name,
-        last_name=payload.last_name,
+        name=payload.name,
         message="Account created successfully",
     )
 
