@@ -1,4 +1,6 @@
 import asyncio
+import base64
+import hashlib
 import json
 import logging
 import os
@@ -9,17 +11,28 @@ from dotenv import load_dotenv
 from pymongo import MongoClient
 from langchain_groq import ChatGroq
 from langchain_community.document_loaders import PyMuPDFLoader
-from langchain_core.messages import SystemMessage,HumanMessage,AIMessage
+from langchain_core.messages import SystemMessage,HumanMessage
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
-from fastapi import APIRouter, FastAPI, UploadFile, File, HTTPException,status
+from fastapi import APIRouter, FastAPI, UploadFile, File, HTTPException,status,Depends
 from fastapi.middleware.cors import CORSMiddleware
 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from pydantic import BaseModel, EmailStr, Field,field_validator
 from datetime import timezone,datetime,timedelta
 from passlib.context import CryptContext
-from jose import jwt
+from jose import JWTError, jwt
+from contextlib import asynccontextmanager
+from typing import Any, Optional
+ 
+from bson import ObjectId
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from motor.motor_asyncio import AsyncIOMotorClient
+from passlib.context import CryptContext
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+
+
+
 
 load_dotenv()
 app=FastAPI()
@@ -28,7 +41,6 @@ UPLOAD_DIR = Path("uploads")
 mongo_uri=os.getenv("MONGO_URI")
 contracts = {}
 embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-
 
 
 
@@ -369,106 +381,59 @@ def chat(request:ChatRequest):
         })
 
         return {"response":response.content}
-#login 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-# --- Schemas ---
-class RegisterRequest(BaseModel):
-    name: str
-    email: EmailStr
-    password: str
+from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy.ext.declarative import declarative_base
+from datetime import datetime
 
-    @field_validator("password")
-    @classmethod
-    def validate_password(cls, v):
-        if len(v) < 8:
-            raise ValueError("Password must be at least 8 characters")
-        if not re.search(r"[A-Z]", v):
-            raise ValueError("Password must contain at least one uppercase letter")
-        if not re.search(r"\d", v):
-            raise ValueError("Password must contain at least one number")
-        return v
+Base = declarative_base()
 
-    @field_validator("first_name", "last_name",check_fields=False)
-    @classmethod
-    def validate_name(cls, v):
-        v = v.strip()
-        if not v:
-            raise ValueError("Name cannot be empty")
-        return v
+class User(Base):
+    __tablename__ = "users"
+    id            = Column(Integer, primary_key=True, index=True)
+    email         = Column(String, unique=True, index=True, nullable=False)
+    hashed_password = Column(String, nullable=False)
+    full_name     = Column(String)
+    created_at    = Column(DateTime, default=datetime.utcnow)
 
+from passlib.context import CryptContext
+from jose import JWTError, jwt
+from datetime import datetime, timedelta
+import os
 
-class RegisterResponse(BaseModel):
-    id: str
-    email: str
-    name: str
-    message: str
+SECRET_KEY    = os.environ["JWT_SECRET"]   # set in .env — keep this secret!
+ALGORITHM     = "HS256"
+ACCESS_EXPIRE = 15          # minutes
+REFRESH_EXPIRE = 60 * 24 * 7  # 7 days in minutes
 
+pwd_ctx = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-# --- Endpoint ---
-@app.post(
-    "/register",
-    response_model=RegisterResponse,
-    status_code=status.HTTP_201_CREATED,
-)
-async def register(payload: RegisterRequest):
-    # Check if email already exists
-    if users_collection.find_one({"email": payload.email}):
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="An account with this email already exists",
-        )
+def hash_password(password: str) -> str:
+    return pwd_ctx.hash(password)
 
-    # Hash password
-    hashed_password = pwd_context.hash(payload.password)
-
-    # Build user document
-    user_doc = {
-        "name": payload.name,
-        "email": payload.email,
-        "password": hashed_password,
-        "is_verified": False,
-        "created_at": datetime.utcnow(),
-    }
-
-    result = users_collection.insert_one(user_doc)
-
-    return RegisterResponse(
-        id=str(result.inserted_id),
-        email=payload.email,
-        name=payload.name,
-        message="Account created successfully",
-    )
-
-SECRET_KEY=os.getenv("JWT_KEY")
-
-
-def create_access_token(email):
-
-    payload={
-      "sub":email,
-      "exp": datetime.now(timezone.utc) + timedelta(days=1)
-
-    }
-    return jwt.encode(
-        payload,
-        SECRET_KEY,
-        algorithm="HS256"
-    )
-class LoginRequest(BaseModel):
-    email: EmailStr
-    password: str
 def verify_password(plain: str, hashed: str) -> bool:
-    return pwd_context.verify(plain, hashed)
-@app.post("/login")
-def login(data: LoginRequest):
-    user = users_collection.find_one({"email": data.email})
+    return pwd_ctx.verify(plain, hashed)
 
+def create_token(data: dict, expires_minutes: int) -> str:
+    payload = data.copy()
+    payload["exp"] = datetime.utcnow() + timedelta(minutes=expires_minutes)
+    return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
-    if not user or not verify_password(data.password, user["password"]):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid credentials",
-        )
+def create_access_token(user_id: int, email: str) -> str:
+    return create_token(
+        {"sub": str(user_id), "email": email, "type": "access"},
+        ACCESS_EXPIRE
+    )
 
-    return {"token": create_access_token(data.email)}
+def create_refresh_token(user_id: int) -> str:
+    return create_token(
+        {"sub": str(user_id), "type": "refresh"},
+        REFRESH_EXPIRE
+    )
+
+def decode_token(token: str) -> dict:
+    try:
+        return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    except JWTError:
+        return None
+    

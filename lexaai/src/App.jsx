@@ -1,29 +1,32 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useAuth,AuthProvider} from "./hooks/useAuth.jsx"
+import ProtectedRoute from "./components/ProtectedRoute"
+import Topbar from "./components/topbar"
+import UploadZone from "./components/Upload"
+import Skeleton from "./components/structure"
+import ResultsDashboard from "./components/dashboard"
+import { useContractAnalysis } from "./hooks/ContractAnalysis"
 
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Dashboard from "./pages/Dashboard";
-import ProtectedRoute from "./components/ProtectedRoute";
+function Dashboard() {
+  const { analyse, loading, result, error } = useContractAnalysis()
 
-function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Login />} />
-
-        <Route path="/register" element={<Register />} />
-
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
-    </BrowserRouter>
-  );
+    <div className="page">
+      <Topbar />
+      <UploadZone onFileSelect={analyse} loading={loading} hasResult={!!result} />
+      {error && <div className="error-box">{error}</div>}
+      {loading && <Skeleton />}
+      {!loading && result && <ResultsDashboard result={result} />}
+    </div>
+  )
 }
 
-export default App;
+export default function App() {
+  return (
+    <AuthProvider>
+      <ProtectedRoute>
+        <Dashboard />
+      </ProtectedRoute>
+    </AuthProvider>
+  )
+}
+
