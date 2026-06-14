@@ -3,7 +3,7 @@ from jose import JWTError, jwt
 from datetime import datetime, timedelta
 import os
 
-SECRET_KEY    = os.getenv["JWT_SECRET"]   # set in .env — keep this secret!
+SECRET_KEY    = os.getenv("KEY")   # set in .env — keep this secret!
 ALGORITHM     = "HS256"
 ACCESS_EXPIRE = 15          # minutes
 REFRESH_EXPIRE = 60 * 24 * 7  # 7 days in minutes

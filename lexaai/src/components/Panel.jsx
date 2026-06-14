@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Sparkles } from "lucide-react";
-import { askContract } from "../services/api";
+import { askQuestion } from "../services/api"
 
 export default function AskPanel({ contractId }) {
   const [input, setInput]       = useState("");
@@ -14,7 +14,7 @@ export default function AskPanel({ contractId }) {
     setInput("");
     setLoading(true);
     try {
-      const answer = await askContract(contractId, question);
+      const answer = await askQuestion(contractId, question);
       setMessages(prev => [...prev, { role: "ai", text: answer.answer }]);
     } catch {
       setMessages(prev => [...prev, { role: "ai", text: "Sorry, something went wrong." }]);

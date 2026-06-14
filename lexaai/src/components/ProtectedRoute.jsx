@@ -1,11 +1,9 @@
-import { Navigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth.jsx"
+import AuthPage from "./AuthPage"
 
 export default function ProtectedRoute({ children }) {
-  const token = localStorage.getItem("token");
-
-  if (!token) {
-    return <Navigate to="/" replace />;
-  }
-
-  return children;
+  const { user, loading } = useAuth()
+  if (loading) return <div className="spin" style={{ margin: "40vh auto", width: 28, height: 28, border: "2px solid var(--gold)", borderTopColor: "transparent", borderRadius: "50%" }} />
+  if (!user) return <AuthPage />
+  return children
 }

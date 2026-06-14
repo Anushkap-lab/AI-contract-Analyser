@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { FileUp } from "lucide-react";
 
-export default function UploadZone({ onFileSelect, isLoading }) {
+export default function UploadZone({ onFileSelect, loading, hasResult}) {
   const [dragging, setDragging] = useState(false);
   const inputRef = useRef();
 

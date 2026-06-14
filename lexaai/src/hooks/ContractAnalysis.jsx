@@ -13,7 +13,7 @@ export function useContractAnalysis() {
       const data = await analyseContract(file);
       setResult(data);
     } catch (err) {
-      setError(err.response?.data?.message || "Analysis failed. Please try again.");
+      setError(err.message || "Analysis failed. Please try again.")
     } finally {
       setLoading(false);
     }
