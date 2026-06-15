@@ -14,6 +14,7 @@ export default function UploadZone({ onFileSelect, loading, hasResult}) {
 
   const handleChange = (e) => {
     if (e.target.files[0]) onFileSelect(e.target.files[0]);
+    e.target.value = "";
   };
 
   return (
@@ -22,7 +23,7 @@ export default function UploadZone({ onFileSelect, loading, hasResult}) {
       onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
       onDragLeave={() => setDragging(false)}
       onDrop={handleDrop}
-      className={`upload-zone ${dragging ? "dragging" : ""} ${isLoading ? "loading" : ""}`}
+      className={`upload-zone ${dragging ? "dragging" : ""} ${loading ? "loading" : ""}`}
     >
       <input
         ref={inputRef}
@@ -32,13 +33,13 @@ export default function UploadZone({ onFileSelect, loading, hasResult}) {
         onChange={handleChange}
       />
       <div className="upload-icon-wrap">
-        {isLoading
+        {loading
           ? <div className="spin" />
           : <FileUp size={25} strokeWidth={1.9} />
         }
       </div>
       <p className="upload-title">
-        {isLoading ? "Analysing contract..." : "Drop your contract here"}
+        {loading ? "Analysing contract..." : "Drop your contract here"}
       </p>
       <p className="upload-sub">
         Drag & drop or click to upload

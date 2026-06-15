@@ -51,15 +51,15 @@ export async function analyseContract(file) {
   const form = new FormData()
   form.append("file", file)
 
-  const res = await fetch(`${BASE}/api/analyse`, {
+  const res = await fetch(`${BASE}/upload`, {
     method: "POST",
-    headers: { ...authHeaders() },  // ← attach JWT
+    headers: { ...authHeaders() },  
     credentials: "include",
     body: form,
   })
 
   if (res.status === 401) {
-    window.location.reload()  // token expired, force re-login
+    window.location.reload()  
     return
   }
 
@@ -71,7 +71,7 @@ export async function analyseContract(file) {
 }
 
 export async function askQuestion(question, contractId) {
-  const res = await fetch(`${BASE}/api/ask`, {
+  const res = await fetch(`${BASE}/ask`, {
     method: "POST",
     headers: { "Content-Type": "application/json", ...authHeaders() },
     credentials: "include",
@@ -81,6 +81,3 @@ export async function askQuestion(question, contractId) {
   const data = await res.json()
   return data.answer
 }
-
-
-

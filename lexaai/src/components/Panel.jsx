@@ -14,8 +14,8 @@ export default function AskPanel({ contractId }) {
     setInput("");
     setLoading(true);
     try {
-      const answer = await askQuestion(contractId, question);
-      setMessages(prev => [...prev, { role: "ai", text: answer.answer }]);
+      const answer = await askQuestion(question,contractId);
+      setMessages(prev => [...prev, { role: "ai", text: answer}]);
     } catch {
       setMessages(prev => [...prev, { role: "ai", text: "Sorry, something went wrong." }]);
     } finally {
@@ -52,7 +52,6 @@ export default function AskPanel({ contractId }) {
           value={input}
           onChange={e => setInput(e.target.value)}
           onKeyDown={e => e.key === "Enter" && send()}
-          placeholder='e.g. "Can I exit before the renewal date?"'
           className="ask-input"
         />
         <button

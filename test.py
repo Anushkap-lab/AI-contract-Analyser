@@ -1,11 +1,9 @@
 from pymongo import MongoClient
 import os
+from dotenv import load_dotenv
 
-uri = os.getenv("MONGO_URI")
+load_dotenv()
+client = MongoClient(os.getenv("MONGO_URI"))
+db = client["AI_legal_analyser"]
 
-try:
-    client = MongoClient(uri)
-    print(client.admin.command("ping"))
-    print("Connected!")
-except Exception as e:
-    print("Error:", e)
+db.users.getIndexes()

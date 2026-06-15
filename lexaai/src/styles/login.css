@@ -1,8 +1,4 @@
-/* ── Dark gold auth theme ─────────────────────────────────────────────────────
-   Covers both login and register modes in AuthPage.jsx
-──────────────────────────────────────────────────────────────────────────────── */
 
-/* ── Shell ────────────────────────────────────────────────────────────────────*/
 .auth-shell {
   min-height: 100vh;
   background-color: #0a0a0a;
@@ -14,7 +10,7 @@
   position: relative;
 }
 
-/* Ambient glow */
+
 .auth-shell::before {
   content: "";
   position: fixed;
@@ -29,10 +25,9 @@
   z-index: 0;
 }
 
-/* ── Card ─────────────────────────────────────────────────────────────────────*/
 .auth-card {
   width: 100%;
-  max-width: 420px;
+  max-width: 480px;
   background-color: #0f0d0a;
   border: 1px solid #2a2218;
   border-radius: 20px;
@@ -67,8 +62,8 @@
 }
 
 .auth-brand .brand-icon {
-  width: 42px;
-  height: 42px;
+  width: 50px;
+  height: 50px;
   border-radius: 11px;
   background: linear-gradient(135deg, #d4af37, #8b6914);
   display: flex;
@@ -81,7 +76,7 @@
 
 .auth-brand .brand-name {
   font-family: 'Playfair Display', serif;
-  font-size: 18px;
+  font-size: 26px;
   font-weight: 600;
   color: #f5f0e8;
   letter-spacing: -0.3px;
@@ -91,7 +86,7 @@
 
 .auth-brand .brand-sub {
   font-size: 10px;
-  color: #6b5a30;
+  color: #8a6934;
   letter-spacing: 1.8px;
   text-transform: uppercase;
   margin: 3px 0 0;
@@ -109,8 +104,8 @@
 }
 
 .auth-subheading {
-  font-size: 13px;
-  color: #5a5040;
+  font-size: 16px;
+  color: #8a6934;
   margin: 0 0 1.5rem;
   line-height: 1.6;
 }
@@ -210,7 +205,7 @@
 .auth-footer {
   text-align: center;
   font-size: 13px;
-  color: #4a4030;
+  color: #70552b;
   margin-top: 1.25rem;
   line-height: 1.5;
 }
