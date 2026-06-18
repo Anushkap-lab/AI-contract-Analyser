@@ -254,3 +254,26 @@ body{
 .skeleton-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.25rem;}
 .skel{background:linear-gradient(90deg,var(--surface2) 25%,var(--border) 50%,var(--surface2) 75%);background-size:200% 100%;animation:shimmer 1.2s infinite;border-radius:10px;}
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+.ask-panel { width: 100%; margin-bottom: 1.25rem; }
+.ask-bar   { display: flex; gap: 8px; width: 100%; margin-bottom: 1.25rem; }
+.ask-input { flex: 1; min-width: 0; width: 100%;}
+.ask-btn{
+  background:var(--navy);
+  color:var(--gold);
+  border:none;
+  border-radius:10px;
+  padding:10px 16px;
+  font-family:'DM Sans',sans-serif;
+  font-size:13px;
+  font-weight:500;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  white-space:nowrap;
+  transition:opacity .15s;
+}
+.ask-btn:hover:not(:disabled){opacity:.88;}
+.ask-btn:disabled{opacity:.4;cursor:not-allowed;}
+.ask-spinner{width:13px;height:13px;border:2px solid var(--gold);border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;}

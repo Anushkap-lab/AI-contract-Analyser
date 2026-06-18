@@ -1,23 +1,40 @@
 import { useState } from "react";
 import { Sparkles } from "lucide-react";
-import { askQuestion } from "../services/api"
+import { askQuestion } from "../services/api";
 
 export default function AskPanel({ contractId }) {
-  const [input, setInput]       = useState("");
-  const [messages, setMessages] = useState([]);
-  const [loading, setLoading]   = useState(false);
+  const [input, setInput]     = useState("");
+  const [answer, setAnswer]   = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError]     = useState("");
 
   const send = async () => {
+    if (!input.trim() || loading) return;
+    const question = input.trim();
+    setInput("");
+    setAnswer("");
+    setError("");
+    setLoading(true);
+    try {
+      const res = await askQuestion(question, contractId);
+      setAnswer(res);
+    } catch {
+      setError("Sorry, something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+    async () => {
     if (!input.trim() || loading) return;
     const question = input.trim();
     setMessages(prev => [...prev, { role: "user", text: question }]);
     setInput("");
     setLoading(true);
     try {
-      const answer = await askQuestion(question,contractId);
-      setMessages(prev => [...prev, { role: "ai", text: answer}]);
+      const answer = await askQuestion(question, contractId);
+      setMessages(prev => [...prev, { role: "ai", text: answer }]);
     } catch {
-      setMessages(prev => [...prev, { role: "ai", text: "Sorry, something went wrong." }]);
+      setMessages(prev => [...prev, { role: "ai", text: "Sorry, something went wrong. Please try again." }]);
     } finally {
       setLoading(false);
     }
@@ -25,43 +42,44 @@ export default function AskPanel({ contractId }) {
 
   return (
     <div className="ask-panel">
-      <h3 className="ask-title">
+
+      <h3 className="sec-title">
         Ask about this contract
       </h3>
 
-      {messages.length > 0 && (
-        <div className="message-list">
-          {messages.map((m, i) => (
-            <div key={i} className={`message ${m.role === "user" ? "user" : "ai"}`}>
-              {m.text}
-            </div>
-          ))}
-          {loading && (
-            <div className="message ai typing">
-              {[0,1,2].map(i => (
-                <span key={i}
-                  style={{ animationDelay: `${i * 0.15}s` }} />
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-
-      <div className="ask-row">
+      {/* Input row */}
+      <div className="ask-bar">
         <input
+          className="ask-input"
           value={input}
           onChange={e => setInput(e.target.value)}
           onKeyDown={e => e.key === "Enter" && send()}
-          className="ask-input"
+          placeholder='e.g. "Can I exit before the renewal date?"'
+          disabled={loading}
         />
         <button
+          className="ask-btn"
           onClick={send}
           disabled={!input.trim() || loading}
-          className="ask-button"
         >
-          <Sparkles size={14} /> Ask
+          {loading
+            ? <><span className="ask-spinner" /> Thinking...</>
+            : <><Sparkles size={14} /> Ask AI</>}
         </button>
       </div>
+
+      {/* Latest answer only — no history */}
+      {answer && (
+        <div className="summary-box" style={{ marginTop: "0.75rem" }}>
+          <div className="summary-label">Answer</div>
+          <div className="summary-text">{answer}</div>
+        </div>
+      )}
+
+      {error && (
+        <div className="error-box" style={{ marginTop: "0.75rem" }}>{error}</div>
+      )}
+
     </div>
   );
 }
