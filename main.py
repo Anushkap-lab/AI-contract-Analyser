@@ -27,7 +27,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5174",],
+    allow_origins=["https://ai-contract-analyser-x6dv.vercel.app/",],
     allow_credentials=True,   
     allow_methods=["*"],
     allow_headers=["*"],
